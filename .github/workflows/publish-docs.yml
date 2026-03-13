@@ -1,0 +1,79 @@
+name: Publish User Guide
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Tauri CLI
+        run: npm install -g @tauri-apps/cli@1.5.10
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Tauri app
+        run: |
+          cd src-tauri
+          tauri build
+
+      - name: Prepare site
+        run: |
+          SITE_DIR=site
+          mkdir -p "$SITE_DIR/downloads"
+          DMG_PATH=$(ls src-tauri/target/release/bundle/dmg/*.dmg | head -n 1)
+          if [ -z "$DMG_PATH" ]; then
+            echo "No DMG generated" >&2
+            exit 1
+          fi
+          DMG_NAME=$(basename "$DMG_PATH")
+          cp "$DMG_PATH" "$SITE_DIR/downloads/"
+          {
+            echo '---'
+            echo 'title: FerrumVault User Guide'
+            echo 'layout: default'
+            echo '---'
+            echo
+            echo "[Download the latest macOS build](downloads/$DMG_NAME)"
+            echo
+            cat docs/user-guide.md
+          } > "$SITE_DIR/index.md"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

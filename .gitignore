@@ -1,0 +1,13 @@
+/target/
+src-tauri/target/
+ui-frontend/dist/*
+ui-frontend/node_modules/
+!ui-frontend/dist/main.js
+!ui-frontend/dist/style.css
+!ui-frontend/dist/index.html
+node_modules/
+scripts/
+tmp-credmanager*/
+*.log
+*.sqlite*
+/.DS_Store

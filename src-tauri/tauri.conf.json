@@ -1,0 +1,47 @@
+{
+  "$schema": "https://tauri.app/v1/schema.json",
+  "package": {
+    "productName": "FerrumVault",
+    "version": "0.1.0"
+  },
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "devPath": "../ui-frontend/dist",
+    "distDir": "../ui-frontend/dist",
+    "withGlobalTauri": true
+  },
+  "tauri": {
+    "security": {
+      "csp": null
+    },
+    "allowlist": {
+      "all": true
+    },
+    "windows": [
+      {
+        "title": "FerrumVault",
+        "width": 1280,
+        "height": 800,
+        "resizable": true
+      }
+    ],
+    "bundle": {
+      "active": true,
+      "identifier": "com.credmanager.desktop",
+      "targets": [
+        "app",
+        "dmg",
+        "msi",
+        "nsis",
+        "appimage",
+        "deb"
+      ],
+      "icon": [
+        "icons/icon.png",
+        "icons/icon.ico",
+        "icons/icon.icns"
+      ]
+    }
+  }
+}

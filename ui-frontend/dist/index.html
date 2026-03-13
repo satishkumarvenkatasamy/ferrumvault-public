@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FerrumVault Desktop</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="login-screen" class="login-shell">
+      <div class="login-card">
+        <h1 id="login-title">Unlock FerrumVault</h1>
+        <p id="login-subtitle" class="login-subtitle-rich">
+          Enter your password for profile
+          <span id="login-subtitle-profile" class="login-subtitle-profile">default</span>
+          <button type="button" id="login-location-info" class="info-icon" aria-label="Show location" title="">
+            ⓘ
+          </button>
+        </p>
+        <form id="login-form">
+          <input id="login-password" type="password" placeholder="Master password" autofocus autocapitalize="none" />
+          <input id="login-confirm" type="password" placeholder="Confirm password" class="hidden" autocapitalize="none" />
+          <button type="submit" class="primary-btn">Unlock</button>
+          <div id="login-status" class="status-text"></div>
+        </form>
+        <div class="advanced-options">
+          <div class="advanced-divider">
+            <hr />
+            <button
+              type="button"
+              id="vault-advanced-toggle"
+              class="advanced-toggle"
+              aria-expanded="false"
+            >
+              <span class="chevron" aria-hidden="true">▼</span>
+              Show advanced vault options
+            </button>
+            <hr />
+          </div>
+          <div id="vault-advanced-panel" class="advanced-panel hidden">
+            <div class="vault-field">
+              <label for="vault-base-dir">Vault folder</label>
+              <input
+                id="vault-base-dir"
+                type="text"
+                placeholder="Folder path, e.g. ~/credmanager"
+                autocomplete="off"
+                autocapitalize="none"
+              />
+            </div>
+            <div class="vault-field">
+              <label for="vault-profile">Profile</label>
+              <input
+                id="vault-profile"
+                list="vault-profile-options"
+                placeholder="default"
+                autocomplete="off"
+                autocapitalize="none"
+              />
+              <datalist id="vault-profile-options"></datalist>
+            </div>
+            <div class="vault-actions">
+              <button type="button" id="vault-apply" class="ghost-btn">Apply Selection</button>
+              <button type="button" id="vault-reset" class="link-btn">Reset to default</button>
+            </div>
+            <div id="vault-context-status" class="context-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-shell" class="app-shell hidden">
+      <div class="top-bar">
+        <input id="global-search" type="search" placeholder="Search everything (folders, tags, URLs, descriptions)..." autocapitalize="none" />
+        <button id="new-credential-btn" class="primary-btn">New Credential</button>
+        <div class="menu-wrapper">
+          <button id="menu-button" class="icon-btn" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">☰</button>
+          <div id="menu-dropdown" class="menu-dropdown hidden" role="menu">
+            <button class="menu-item" data-dialog="settings" role="menuitem">Settings</button>
+            <button class="menu-item" data-dialog="sync-upload" role="menuitem">Sync to Google Drive</button>
+            <button class="menu-item" data-dialog="sync-import" role="menuitem">Import from Google Drive</button>
+            <button class="menu-item" data-dialog="change-password" role="menuitem">Change Password</button>
+            <button class="menu-item" data-dialog="about" role="menuitem">About FerrumVault</button>
+            <hr />
+            <button class="menu-item" id="logout-btn" role="menuitem">Logout</button>
+          </div>
+        </div>
+      </div>
+      <div id="toast-host" class="toast-host" aria-live="polite" aria-relevant="additions"></div>
+      <div class="main-grid">
+        <section class="column column-folders resizable">
+          <header class="column-header">
+            <span>Folders</span>
+            <button class="link-btn" id="clear-folder-filter" type="button">Clear</button>
+          </header>
+          <div class="search">
+            <input id="folder-search" type="search" placeholder="Find folder..." autocapitalize="none" />
+          </div>
+          <div class="list" id="folder-list"></div>
+          <header class="column-header">
+            <span>Tags</span>
+            <button class="link-btn" id="clear-tag-filter" type="button">Clear</button>
+          </header>
+          <div class="list" id="tag-list"></div>
+        </section>
+        <section class="column column-credentials resizable">
+          <header>
+            <div class="column-title">Credentials</div>
+            <div id="breadcrumb" class="breadcrumb">All Folders</div>
+          </header>
+          <div class="search">
+            <input id="credential-search" type="search" placeholder="Search credentials..." autocapitalize="none" />
+            <!-- <button class="link-btn" id="clear-search-filter" type="button">Clear</button> -->
+          </div>
+          <div class="list credential-list" id="credential-list"></div>
+        </section>
+        <section class="column column-details">
+          <header>Details</header>
+          <div class="detail-scroll" id="detail-pane"></div>
+        </section>
+      </div>
+      <div id="app-status-tray" class="status-bar-tray">
+        <div class="session-progress-track">
+          <div id="app-session-progress" class="session-progress-fill"></div>
+        </div>
+        <footer id="app-context-bar" class="status-bar app-status-bar"></footer>
+      </div>
+    </div>
+    <div id="modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h2 id="modal-title">FerrumVault</h2>
+          <button id="modal-close" class="icon-btn" aria-label="Close dialog">✕</button>
+        </div>
+        <div id="modal-content" class="modal-content"></div>
+        <div class="modal-actions">
+          <div id="dialog-profile-pill" class="dialog-profile-pill" title=""></div>
+          <button id="modal-dismiss" class="ghost-btn">Close</button>
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
