@@ -34,8 +34,7 @@ const TOKEN_ENDPOINT: &str = "https://oauth2.googleapis.com/token";
 const DRIVE_APPDATA_PARENT: &str = "appDataFolder";
 const OAUTH_AUTH_ENDPOINT: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const OAUTH_SCOPE: &str = "https://www.googleapis.com/auth/drive.appdata";
-pub const GOOGLE_OAUTH_CLIENT_ID: &str =
-    "__SET_GOOGLE_OAUTH_CLIENT_ID__";
+pub const GOOGLE_OAUTH_CLIENT_ID: &str = "__SET_GOOGLE_OAUTH_CLIENT_ID__";
 pub const GOOGLE_OAUTH_REDIRECT_URI: &str = "http://localhost";
 pub const GOOGLE_OAUTH_CLIENT_SECRET: &str = "__SET_GOOGLE_OAUTH_CLIENT_SECRET__";
 
