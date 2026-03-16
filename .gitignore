@@ -6,7 +6,6 @@ ui-frontend/node_modules/
 !ui-frontend/dist/style.css
 !ui-frontend/dist/index.html
 node_modules/
-scripts/
 tmp-credmanager*/
 *.log
 *.sqlite*

@@ -12,7 +12,7 @@ Prerequisites
    # or run per-command without global install:
    # npx --yes @tauri-apps/cli@1.5.10 tauri <command>
 4. Clone the public repository and install JavaScript deps:
-   git clone https://github.com/<your-account>/ferrumvault-public.git
+   git clone https://github.com/satishkumarvenkatasamy/ferrumvault-public.git
    cd ferrumvault-public
    npm install
 
