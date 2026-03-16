@@ -51,16 +51,35 @@ jobs:
           fi
           DMG_NAME=$(basename "$DMG_PATH")
           cp "$DMG_PATH" "$SITE_DIR/downloads/"
+          npx --yes marked docs/user-guide.md > "$SITE_DIR/user-guide.html"
           {
-            echo '---'
-            echo 'title: FerrumVault User Guide'
-            echo 'layout: default'
-            echo '---'
-            echo
-            echo "[Download the latest macOS build](downloads/$DMG_NAME)"
-            echo
-            cat docs/user-guide.md
-          } > "$SITE_DIR/index.md"
+            cat <<HTML
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FerrumVault User Guide</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 2rem; line-height: 1.6; }
+    .download-link { display: inline-block; margin: 1rem 0; padding: 0.75rem 1.25rem; background: #4f46e5; color: #fff; border-radius: 8px; text-decoration: none; }
+    .download-link:hover { background: #4338ca; }
+    .guide-body { max-width: 960px; }
+  </style>
+</head>
+<body>
+  <h1>FerrumVault User Guide</h1>
+  <a class="download-link" href="downloads/$DMG_NAME">Download the latest macOS build</a>
+  <div class="guide-body">
+HTML
+            cat "$SITE_DIR/user-guide.html"
+            cat <<'HTML'
+  </div>
+</body>
+</html>
+HTML
+          } > "$SITE_DIR/index.html"
+          rm "$SITE_DIR/user-guide.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
