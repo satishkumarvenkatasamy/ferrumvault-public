@@ -10,3 +10,4 @@ tmp-credmanager*/
 *.log
 *.sqlite*
 /.DS_Store
+.DS_Store

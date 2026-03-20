@@ -1,8 +1,7 @@
 name: Publish User Guide
 
 on:
-  push:
-    branches: [main]
+  # Disabled automatic publishing; run manually if ever needed.
   workflow_dispatch:
 
 permissions:
@@ -53,6 +52,7 @@ jobs:
           cp "$DMG_PATH" "$SITE_DIR/downloads/"
           USER_GUIDE_HTML=$(mktemp)
           npx --yes marked docs/user-guide.md > "$USER_GUIDE_HTML"
+          GUIDE_BODY=$(cat "$USER_GUIDE_HTML")
           cat <<HTML > "$SITE_DIR/index.html"
 <!doctype html>
 <html lang="en">
@@ -71,7 +71,7 @@ jobs:
   <h1>FerrumVault User Guide</h1>
   <a class="download-link" href="downloads/$DMG_NAME">Download the latest macOS build</a>
   <div class="guide-body">
-$(cat "$USER_GUIDE_HTML")
+$GUIDE_BODY
   </div>
 </body>
 </html>

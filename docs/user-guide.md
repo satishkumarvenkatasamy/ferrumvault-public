@@ -158,6 +158,6 @@ Use the omnibox to search across names, descriptions, folders, tags, categories,
 ## Support
 
 - File bugs and feature requests in the GitHub repository.
-- For security disclosures, contact the FerrumVault security team at `security@your-domain.com`.
+- For security disclosures, contact the FerrumVault security team at `satishkumar.venkatasamy@gmail.com`.
 
 ![About FerrumVault dialog with version/build info](../screenshots/014-AboutFerrumVault.png)
