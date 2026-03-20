@@ -25,6 +25,8 @@ use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
 use crate::crypto::{CipherBlob, decrypt_with_key, encrypt_with_key, generate_random_dek};
+#[cfg(test)]
+use crate::db::initialize_vault;
 use crate::db::{VaultPaths, open_connection};
 
 const BUNDLE_SCHEMA_VERSION: &str = "1";
@@ -322,7 +324,9 @@ impl<'a> SyncService<'a> {
         file_id: &str,
     ) -> Result<BundleManifest> {
         let bytes = drive.download_file(creds, file_id)?;
-        let manifest = restore_bundle(self.paths, &bytes, master_key)?;
+        let package = deserialize_bundle(&bytes)?;
+        self.ensure_fresh_revision(&package.manifest)?;
+        let manifest = restore_bundle(self.paths, package, master_key)?;
         self.record_upload(&manifest)?;
         self.save_credentials(creds)?;
         Ok(manifest)
@@ -489,6 +493,14 @@ impl<'a> SyncService<'a> {
     fn next_revision(&self) -> Result<i64> {
         Ok(self.status()?.last_revision + 1)
     }
+
+    fn ensure_fresh_revision(&self, manifest: &BundleManifest) -> Result<()> {
+        let current = self.status()?;
+        if manifest.revision <= current.last_revision {
+            return Err(anyhow!("STALE_BUNDLE"));
+        }
+        Ok(())
+    }
 }
 
 fn serialize_bundle(bundle: &BundleEnvelope) -> Result<Vec<u8>> {
@@ -507,10 +519,9 @@ fn deserialize_bundle(bytes: &[u8]) -> Result<BundlePackage> {
 
 fn restore_bundle(
     paths: &VaultPaths,
-    bytes: &[u8],
+    package: BundlePackage,
     master_key: &[u8; 32],
 ) -> Result<BundleManifest> {
-    let package = deserialize_bundle(bytes)?;
     let wrapped = STANDARD.decode(package.wrapped_dek)?;
     let cipher = STANDARD.decode(package.cipher_blob)?;
     let wrapped_blob = CipherBlob::from_bytes(&wrapped)?;
@@ -876,7 +887,40 @@ mod tests {
         assert_eq!(bundle.manifest.files.len(), 4);
         assert_eq!(bundle.manifest.profile, "test-profile");
         let payload = serialize_bundle(&bundle).unwrap();
-        let manifest = restore_bundle(&paths, &payload, &master_key).unwrap();
+        let package = deserialize_bundle(&payload).unwrap();
+        let manifest = restore_bundle(&paths, package, &master_key).unwrap();
         assert_eq!(manifest.profile, "test-profile");
+    }
+
+    #[test]
+    fn stale_bundle_revision_is_rejected() {
+        let tmp = TempDir::new().unwrap();
+        let base = tmp.path();
+        let paths = VaultPaths::new(base, "guard-profile");
+        fs::create_dir_all(&paths.profile_root).unwrap();
+        initialize_vault(&paths).unwrap();
+        let service = SyncService::new(&paths);
+        let manifest = BundleManifest {
+            bundle_id: "latest".into(),
+            profile: "guard-profile".into(),
+            revision: 5,
+            schema_version: BUNDLE_SCHEMA_VERSION.into(),
+            created_at_utc: Utc::now().to_rfc3339(),
+            device_fingerprint: "device".into(),
+            device_label: "label".into(),
+            files: Vec::new(),
+        };
+        service.record_upload(&manifest).unwrap();
+
+        let stale = BundleManifest {
+            revision: 4,
+            ..manifest.clone()
+        };
+        assert!(service.ensure_fresh_revision(&stale).is_err());
+        let future = BundleManifest {
+            revision: 6,
+            ..manifest
+        };
+        service.ensure_fresh_revision(&future).unwrap();
     }
 }

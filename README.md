@@ -43,15 +43,47 @@ FerrumVault is a Tauri-based desktop credential manager with a Rust core. It com
    - Modify `ui-frontend/dist/main.js` and `style.css`, then rerun `cargo run` from `src-tauri`.
 
 ## Screenshots
-Visual walkthroughs live under `./screenshots`. The full desktop tour is embedded below:
+Visual walkthroughs live under `./screenshots`. Highlights from the latest build are shown below.
 
-| Login | Vault listing | Reveal credential | Copy username | Select credential |
-| --- | --- | --- | --- | --- |
-| ![Login screen](screenshots/001-LoginScreen.png) | ![Credential list](screenshots/002-CredentialsListingPage.png) | ![Reveal credential](screenshots/003-RevealCredentials.png) | ![Copy username](screenshots/004-CopyUsername.png) | ![Select credential](screenshots/005-SelectAnAppCredential.png) |
+**Unlock & Profiles** – The login flow lets you pick base folders and switch profiles before unlocking.
 
-| Copy password | View timestamps | Filter by tag | Search app | Global search |
-| --- | --- | --- | --- | --- |
-| ![Copy credential](screenshots/006-CopyCredential.png) | ![View created/last accessed timestamps](screenshots/007-ViewCreatedLastAccessedTimestamp.png) | ![Find credential by tag](screenshots/008-FindAnCredentialByTag.png) | ![Search an app](screenshots/009-SearchAnApp.png) | ![Search everywhere](screenshots/010-SearchAnAppOnAnything.png) |
+![Login screen showing profile selector](screenshots/001-LoginScreenNew.png)
+
+**Profile picker while unlocking** – Quickly swap between work, personal, or finance vaults.
+
+![Profile selector when logging in](screenshots/002-SwitchProfileWhileLoggingIn.png)
+
+**Vault home** – The refreshed three-pane layout keeps folders, credentials, and detail views within reach.
+
+![FerrumVault main page](screenshots/003-FerrumVaultMainPage.png)
+
+**Credential detail** – View usernames, URLs, notes, and one-click copy buttons.
+
+![Credential detail panel](screenshots/004-ViewAppCredentials.png)
+
+**Password reveal & copy** – Two-step reveals with timers keep secrets safe while you copy.
+
+![Password reveal controls](screenshots/005-ViewAndCopyPassword.png)
+
+**Password history** – See previous versions with timestamps before restoring any value.
+
+![Password history timeline](screenshots/007-PasswordHistory.png)
+
+**Command hub & settings** – The hamburger menu surfaces features like Google Drive sync, settings, and session info.
+
+![Hamburger menu and feature list](screenshots/009-FeaturesInHamburgerMenu.png)
+
+**Google Drive backup** – Upload encrypted bundles, authenticate with OAuth, or import vaults on a clean machine.
+
+![Backup to Google Drive](screenshots/011-BackupToGoogleDrive.png)
+
+**Global search & quick add** – Search across every field or create a credential from the dashboard.
+
+![Searching across all credential fields](screenshots/015-SearchOnAnyFields.png)
+
+**Session controls** – Extend session timers or change the master password directly from the UI.
+
+![Session validity banner and change password screen](screenshots/017-SessionValidityAndExtendSession.png)
 
 ## Testing
 Run all Rust unit tests:

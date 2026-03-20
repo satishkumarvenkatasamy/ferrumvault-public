@@ -77,11 +77,47 @@ npm run tauri:build
 3. Enter the master password for existing vaults or create a new one for fresh installations.
 4. The dashboard lists folders and credentials on the left, and the selected credential detail pane on the right.
 
+FerrumVault’s unlock surface includes a profile picker so you can separate work, personal, and finance vaults before signing in.
+
+![Login screen with base folder and profile controls](../screenshots/001-LoginScreenNew.png)
+
+![Switching profiles while logging in](../screenshots/002-SwitchProfileWhileLoggingIn.png)
+
 ## Managing Credentials
 
 - Use the **New Credential** button to create credentials. Required fields include app name, folder, username, and password.
 - You can edit a credential by selecting it and clicking **Edit**.
 - Password history is accessible inside the credential detail panel under **Password History**; FerrumVault maintains timestamped versions automatically.
+
+![Main dashboard showing folders, credential list, and details](../screenshots/003-FerrumVaultMainPage.png)
+
+Selecting a credential surfaces usernames, URLs, custom fields, and one-click copy buttons.
+
+![Credential detail panel with copy controls](../screenshots/004-ViewAppCredentials.png)
+
+Password reveals use timers so the secret disappears automatically.
+
+![Reveal password dialog with countdown](../screenshots/005-ViewAndCopyPassword.png)
+
+Use the combined copy control when you need both username and password at once.
+
+![Copy credential button inside the detail view](../screenshots/006-CopyCredentials.png)
+
+FerrumVault tracks every password change with timestamps.
+
+![Password history timeline](../screenshots/007-PasswordHistory.png)
+
+Open any entry to view the previous value before restoring it.
+
+![Viewing a historical password entry](../screenshots/008-ViewPasswordHistory.png)
+
+The **New Credential** form accepts folders, tags, and categories so later searches can hit any field.
+
+![Create new credential form](../screenshots/016-CreateNewCredential.png)
+
+Use the omnibox to search across names, descriptions, folders, tags, categories, or arbitrary text.
+
+![Global search covering every credential field](../screenshots/015-SearchOnAnyFields.png)
 
 ## Google Drive Synchronization
 
@@ -91,11 +127,27 @@ npm run tauri:build
 4. To restore, use **Import from Google Drive**, select a bundle, and click **Download selected bundle**.
 5. Advanced manual override (pasting authorization codes or refresh tokens) is hidden under **Manually configure Google account**.
 
+![Hamburger menu exposing sync, backup, and settings](../screenshots/009-FeaturesInHamburgerMenu.png)
+
+![Settings screen with Google Drive connection controls](../screenshots/010-SettingsPage.png)
+
+![Backing up an encrypted bundle to Google Drive](../screenshots/011-BackupToGoogleDrive.png)
+
+![Prompt reminding you to authenticate with Google before backups](../screenshots/012-AuthenticatingToGoogleDriveIsMustForBackup.png)
+
+![Importing a bundle from Google Drive on another device](../screenshots/013-ImportFromYourGoogleDriveInAnyDevice.png)
+
 ## Command Palette & Keyboard Shortcuts
 
 - `⌘/Ctrl` + `K`: opens the command palette.
 - Arrow keys / search inputs filter folders and credentials immediately.
 - The session timer indicates remaining unlock time; re-authenticate when it expires.
+
+![Session timer warning with extend option](../screenshots/017-SessionValidityAndExtendSession.png)
+
+![Re-authentication modal for extending the session](../screenshots/018-ExtendYourSessionByReauthenticating.png)
+
+![Change master password flow](../screenshots/019-ChangeVaultPassword.png)
 
 ## Troubleshooting
 
@@ -107,3 +159,5 @@ npm run tauri:build
 
 - File bugs and feature requests in the GitHub repository.
 - For security disclosures, contact the FerrumVault security team at `security@your-domain.com`.
+
+![About FerrumVault dialog with version/build info](../screenshots/014-AboutFerrumVault.png)

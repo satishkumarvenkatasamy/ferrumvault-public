@@ -51,9 +51,9 @@ jobs:
           fi
           DMG_NAME=$(basename "$DMG_PATH")
           cp "$DMG_PATH" "$SITE_DIR/downloads/"
-          npx --yes marked docs/user-guide.md > "$SITE_DIR/user-guide.html"
-          {
-            cat <<HTML
+          USER_GUIDE_HTML=$(mktemp)
+          npx --yes marked docs/user-guide.md > "$USER_GUIDE_HTML"
+          cat <<HTML > "$SITE_DIR/index.html"
 <!doctype html>
 <html lang="en">
 <head>
@@ -71,15 +71,12 @@ jobs:
   <h1>FerrumVault User Guide</h1>
   <a class="download-link" href="downloads/$DMG_NAME">Download the latest macOS build</a>
   <div class="guide-body">
-HTML
-            cat "$SITE_DIR/user-guide.html"
-            cat <<'HTML'
+$(cat "$USER_GUIDE_HTML")
   </div>
 </body>
 </html>
 HTML
-          } > "$SITE_DIR/index.html"
-          rm "$SITE_DIR/user-guide.html"
+          rm "$USER_GUIDE_HTML"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

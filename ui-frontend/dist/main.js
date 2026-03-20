@@ -2930,8 +2930,19 @@ async function attemptLogin() {
       }
     }
   } catch (err) {
-    const message = typeof err === "string" ? err : "Unlock failed";
-    setLoginFeedback(message.replace(/_/g, " "), 'error');
+    const rawMessage = typeof err === "string"
+      ? err
+      : err && typeof err === "object" && "message" in err
+        ? err.message
+        : "Unlock failed";
+    const normalized = (rawMessage || "").toString().toLowerCase();
+    if (normalized.includes("invalid master password")) {
+      setLoginFeedback("Invalid password", 'error');
+    } else if (normalized.includes("decryption failure") || normalized.includes("invalid credential")) {
+      setLoginFeedback("Invalid credential", 'error');
+    } else {
+      setLoginFeedback((rawMessage || "Unlock failed").replace(/_/g, " "), 'error');
+    }
   }
 }
 

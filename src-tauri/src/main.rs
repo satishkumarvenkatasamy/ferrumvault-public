@@ -674,8 +674,7 @@ fn session_master_key(state: &tauri::State<AppState>) -> Result<[u8; 32], String
     }
 }
 
-#[tauri::command]
-fn check_session(state: tauri::State<AppState>) -> Result<bool, String> {
+fn check_session_inner(state: &AppState) -> Result<bool, String> {
     println!("[DEBUG] check_session command invoked");
     log_event("check_session", "Checking session state");
     let mut guard = state
@@ -692,6 +691,11 @@ fn check_session(state: tauri::State<AppState>) -> Result<bool, String> {
     };
     log_event("check_session", format!("Session fresh: {}", fresh));
     Ok(fresh)
+}
+
+#[tauri::command]
+fn check_session(state: tauri::State<AppState>) -> Result<bool, String> {
+    check_session_inner(state.inner())
 }
 
 #[tauri::command]
@@ -723,7 +727,7 @@ fn session_status_detail(state: tauri::State<AppState>) -> Result<SessionStatusP
 #[tauri::command]
 fn login(state: tauri::State<AppState>, password: String) -> Result<(), String> {
     println!("[DEBUG] login command invoked");
-    log_event("login", format!("Received password input: {}", password));
+    log_event("login", "Received password input");
     let paths = resolve_paths(&state).map_err(|e| e.to_string())?;
     if !vault_initialized(&paths).map_err(|e| e.to_string())? {
         log_event("login", "Vault not initialized; returning NEEDS_SETUP");
@@ -849,10 +853,7 @@ fn setup_password(
     confirm: String,
 ) -> Result<(), String> {
     println!("[DEBUG] setup_password command invoked");
-    log_event(
-        "setup_password",
-        format!("Received password={} confirm={}", password, confirm),
-    );
+    log_event("setup_password", "Received password inputs");
     if password.is_empty() {
         log_event("setup_password", "Password missing");
         return Err("PASSWORD_REQUIRED".into());
@@ -1165,6 +1166,67 @@ fn reveal_password_history_entry(
     engine
         .reveal_history_entry(historyId)
         .map_err(|e| e.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::{
+        sync::Mutex,
+        time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    };
+
+    fn temp_context() -> VaultContext {
+        let mut base_dir = std::env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        base_dir.push(format!("credmanager-tauri-session-{}", nanos));
+        VaultContext {
+            base_dir,
+            profile: "test".into(),
+        }
+    }
+
+    fn state_with_session(age: Duration) -> AppState {
+        AppState {
+            session: Mutex::new(Some(Session {
+                master_key: [0u8; 32],
+                authenticated_at: Instant::now() - age,
+            })),
+            context: Mutex::new(temp_context()),
+        }
+    }
+
+    #[test]
+    fn expired_sessions_are_cleared() {
+        let state = state_with_session(SESSION_TIMEOUT + Duration::from_secs(1));
+        assert!(!check_session_inner(&state).unwrap());
+        assert!(state.session.lock().unwrap().is_none());
+    }
+
+    #[test]
+    fn check_session_does_not_refresh_timestamp() {
+        let state = state_with_session(Duration::from_secs(30));
+        let before = {
+            let guard = state.session.lock().unwrap();
+            guard.as_ref().unwrap().authenticated_at
+        };
+        assert!(check_session_inner(&state).unwrap());
+        let after = {
+            let guard = state.session.lock().unwrap();
+            guard.as_ref().unwrap().authenticated_at
+        };
+        assert_eq!(before, after);
+        {
+            let mut guard = state.session.lock().unwrap();
+            if let Some(session) = guard.as_mut() {
+                session.authenticated_at = Instant::now() - (SESSION_TIMEOUT + Duration::from_secs(1));
+            }
+        }
+        assert!(!check_session_inner(&state).unwrap());
+    }
 }
 
 fn main() {
